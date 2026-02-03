@@ -154,6 +154,14 @@
           <!-- ✅ CIRCULITO ESTADO PUERTA -->
           <span v-if="doorDotState(id)" class="door-dot" :class="doorDotState(id)"></span>
         </div>
+            <TarjetaMapa
+            v-for="item in listaDeDatos"
+            :key="item.nombreRed"
+            :nombreRed="item.nombreRed"
+            :estado="item.estado"
+            :fecha_hora="item.fecha_hora"
+          />
+  </div>
       </div>
 
       <!-- PLANTA PRIMERA -->
@@ -194,7 +202,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -206,6 +213,68 @@ import {
   obtenerEspaciosDesdoble,
   obtenerEspaciosSinDocencia
 } from '@/services/schoolBaseServer'
+import TarjetaMapa from '@/components/redes/TarjetaMapa.vue'
+
+//Tarjetas de Estado de Red-----------------------------------------
+
+//Datos de prueba
+const listaDeDatos = ref([
+  {
+    nombreRed: 'Andared_Corporativo',
+    estado: 'CONECTADO',
+    fecha_hora: '2026-02-03 09:15'
+  },
+  {
+    nombreRed: 'Buscando...',
+    estado: 'FALLO_AUTH',
+    fecha_hora: '2026-02-03 08:40'
+  },
+  {
+    nombreRed: 'Cargando...+',
+    estado: 'SIN_SENAL',
+    fecha_hora: '2026-02-03 07:55'
+  },
+    {
+    nombreRed: 'Andared_IoT',
+    estado: 'SIN_SENAL',
+    fecha_hora: '2026-02-03 07:55'
+  },
+  {
+    nombreRed: 'Andared',
+    estado: 'CONECTADO',
+    fecha_hora: '2026-02-03 07:55'
+  }
+  
+]);
+
+//----------------------------------------------------------------------------------------------------------
+
+
+//--------------Llamada a la API para pedir las redes(Ahora mismo no hay server asi que lo comento)----------------------
+/* async function pideDatos() {
+  try {
+    const response = await fetch('http://localhost:8080/registros-redes');
+    
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    const myData = await response.json();
+    
+    listaDeDatos.value = myData;
+
+  } catch (error) {
+    console.error("Hubo un error al obtener los datos:", error);
+  }
+} */
+
+/* onMounted(() => {
+  pideDatos();
+  setInterval(pideDatos, 20000)
+}); */
+
+//-----------------------------------------------------------------------------------------------------
+
 
 // TOAST
 const isToastOpen = ref(false)

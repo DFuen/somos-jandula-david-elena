@@ -1,78 +1,124 @@
 <template>
-  <div class="network-scanner">
-    <div class="placeholder-content">
-      <div class="construction-icon">🚧</div>
-      <h1>🌐 Escaneo de Redes</h1>
-      <p class="placeholder-text">Aquí iría la visualización general de las redes</p>
-      <p class="construction-label">En construcción</p>
-    </div>
+
+  <div class="contenedor">
+    <Tarjeta
+      v-for="item in listaDeDatos"
+      :key="item.nombreRed"
+      :nombreRed="item.nombreRed"
+      :estado="item.estado"
+      :fecha_hora="item.fecha_hora"
+    />
   </div>
 </template>
 
-<script setup lang="ts">
-// Página de prueba - sin funcionalidad implementada
+<script setup>
+import { ref, onMounted } from 'vue' 
+import Tarjeta from '../../components/redes/Tarjeta.vue'
+import TarjetaMapa from '@/components/redes/TarjetaMapa.vue';
+
+//Inicializamos como un ref con redes de prueba
+//-------------------------------------------------------------------
+const listaDeDatos = ref([
+  {
+    nombreRed: 'Andared_Corporativo',
+    estado: 'CONECTADO',
+    fecha_hora: '2026-02-03 09:15'
+  },
+  {
+    nombreRed: 'Buscando...',
+    estado: 'FALLO_AUTH',
+    fecha_hora: '2026-02-03 08:40'
+  },
+  {
+    nombreRed: 'Cargando...+',
+    estado: 'SIN_SENAL',
+    fecha_hora: '2026-02-03 07:55'
+  },
+    {
+    nombreRed: 'Andared_IoT',
+    estado: 'SIN_SENAL',
+    fecha_hora: '2026-02-03 07:55'
+  },
+  {
+    nombreRed: 'Andared',
+    estado: 'CONECTADO',
+    fecha_hora: '2026-02-03 07:55'
+  }
+  
+]);
+//-------------------------------------------------------------------
+
+
+//--------------Llamada a la API para pedir las redes(Ahora mismo no hay server asi que lo comento)----------------------
+/* async function pideDatos() {
+  try {
+    const response = await fetch('http://localhost:8080/registros-redes');
+    
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    const myData = await response.json();
+    
+    listaDeDatos.value = myData;
+
+  } catch (error) {
+    console.error("Hubo un error al obtener los datos:", error);
+  }
+} */
+
+/* onMounted(() => {
+  pideDatos();
+  setInterval(pideDatos, 20000)
+}); */
+
+
+
+
 </script>
 
 <style scoped>
-.network-scanner {
+
+*{
+  padding: 0;
+  margin:0;
+}
+
+.contenedor{
+  margin: 0;
+  padding: 50px;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+  transition: background-color 0.3s ease;
+}
+
+
+button{
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  background-color: white;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px){
+  
+.contenedor{
   display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0;
 }
 
-.placeholder-content {
-  text-align: center;
-  background: white;
-  padding: 60px 40px;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
-}construction-icon {
-  font-size: 5em;
-  margin-bottom: 20px;
-  animation: swing 2s ease-in-out infinite;
-}
 
-@keyframes swing {
-  0%, 100% { transform: rotate(-10deg); }
-  50% { transform: rotate(10deg); }
-}
-
-.placeholder-content h1 {
-  font-size: 2.5em;
-  color: #667eea;
-  margin-bottom: 20px;
-}
-
-.placeholder-text {
-  font-size: 1.2em;
-  color: #666;
-  margin: 0 0 15px 0;
-}
-
-.construction-label {
-  font-size: 1.1em;
-  color: #f39c12;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-@media (max-width: 768px) {
-  .placeholder-content {
-    padding: 40px 30px;
-  }
-
-  .placeholder-content h1 {
-    font-size: 2em;
-  }
-
-  .placeholder-text {
-    font-size: 1em;
-  }
 }
 </style>
 
