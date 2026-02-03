@@ -154,6 +154,9 @@
           <!-- ✅ CIRCULITO ESTADO PUERTA -->
           <span v-if="doorDotState(id)" class="door-dot" :class="doorDotState(id)"></span>
         </div>
+
+        <!--Vista del estado de las redes -->
+        <div class="vistaRedesPlantaBaja vistaRedes">
             <TarjetaMapa
             v-for="item in listaDeDatos"
             :key="item.nombreRed"
@@ -161,9 +164,9 @@
             :estado="item.estado"
             :fecha_hora="item.fecha_hora"
           />
+          </div>
   </div>
-      </div>
-
+</div>
       <!-- PLANTA PRIMERA -->
       <div v-show="planta === 'primera'" id="planta-primera" class="caja-mapa" :style="mapStyle(plantaPrimeraUrl)">
         <div
@@ -180,7 +183,21 @@
 
           <!-- ✅ CIRCULITO ESTADO PUERTA -->
           <span v-if="doorDotState(id)" class="door-dot" :class="doorDotState(id)"></span>
+
+
         </div>
+
+                <!--Vista del estado de las redes -->
+        <div class="vistaRedesPlantaPrimera vistaRedes">
+            <TarjetaMapa
+            v-for="item in listaDeDatos"
+            :key="item.nombreRed"
+            :nombreRed="item.nombreRed"
+            :estado="item.estado"
+            :fecha_hora="item.fecha_hora"
+          />
+          </div>
+
       </div>
 
       <!-- PLANTA SEGUNDA -->
@@ -200,7 +217,20 @@
           <!-- ✅ CIRCULITO ESTADO PUERTA -->
           <span v-if="doorDotState(id)" class="door-dot" :class="doorDotState(id)"></span>
         </div>
+
+                      <!--Vista del estado de las redes -->
+        <div class="vistaRedesPlantaSegunda vistaRedes">
+            <TarjetaMapa
+            v-for="item in listaDeDatos"
+            :key="item.nombreRed"
+            :nombreRed="item.nombreRed"
+            :estado="item.estado"
+            :fecha_hora="item.fecha_hora"
+          />
+          </div>
+
       </div>
+
     </div>
 </template>
 
@@ -734,8 +764,32 @@ onBeforeUnmount(() => {
 })
 </script>
 
+
+
+
+
+
 <style scoped>
 
+/*Redes*/
+.vistaRedes{
+  position: absolute;
+}
+
+.vistaRedesPlantaBaja{
+  top: 5px;
+  left: 37%;
+}
+
+.vistaRedesPlantaPrimera{
+  top: 10px;
+  left: 13%;
+}
+
+.vistaRedesPlantaSegunda{
+  top: 10px;
+  left: 13%;
+}
 
 /* Tema claro por defecto */
 #djg-main-box {
@@ -747,6 +801,9 @@ onBeforeUnmount(() => {
   --btn-bg: rgb(238, 243, 242);
   --btn-hover: rgb(253, 255, 121);
   --btn-text: #111111;
+
+  --zonaseleccionada: rgba(1, 128, 255, 0.842);
+  --zonaseleccionadafondo: rgba(21, 104, 187, 0.226);
 
   --zone-bg: rgba(255, 255, 0, 0.26);
   --zone-hover: rgba(28, 46, 146, 0.5);
@@ -913,7 +970,8 @@ button:hover {
 }
 
 .zone-selected {
-  box-shadow: 0 0 10px 3px rgba(255, 0, 0, 0.85);
+  box-shadow: 0 0 10px 7px var(--zonaseleccionada);
+  background-color: var(--zonaseleccionadafondo);
 }
 
 /* Texto dentro de cada zona */
