@@ -9,15 +9,68 @@
       :fecha_hora="item.fecha_hora"
     />
   </div>
+
+
+  <button class="administrar" type="button" @click="mostrarMenu">Administrar</button>
+
+
+  <div class="administracion" v-show="mostrarAdministracion">
+
+    <div>
+    <h4>Lista de redes disponibles</h4>
+
+    <ul>
+      <li v-for="item in listaDeDatos" :key="item.nombreRed">
+        <span>{{ item.nombreRed }} </span><button class="borrarred" :id="item.nombreRed" @click="borrarRed(item.nombreRed)">Borrar</button>
+      </li>
+    </ul>
+
+
+    </div>
+
+
+
+
+    <form >
+
+      <h4>Agregar nueva red</h4>
+
+      <label for="nombreRed">Nombre de la Red:</label>
+      <input type="text" id="nombreRed" name="nombreRed">
+
+      <label for="password">Contraseña</label>
+      <input type="text" id="password" name="password">
+
+      <label for="fecha_hora">Configuración de red:</label>
+      <input id="configuracionred" name="configuracionred">
+
+      <button type="submit">Agregar Red</button>
+
+    </form>
+
+    <div>
+      <h4>Establer tiempo de consulta de redes</h4>
+
+      <form>
+        <label for="tiempoConsulta">Tiempo de consulta:</label>
+        <input type="number" id="tiempoConsulta" name="tiempoConsulta" min="1" max="3600"> <span>segundos</span>
+
+        <button type="submit">Establecer Tiempo</button>
+      </form>
+
+    </div>
+
+  </div>
+  
+
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue' 
+import { ref, onMounted, h } from 'vue' 
 import Tarjeta from '../../components/redes/Tarjeta.vue'
-import TarjetaMapa from '@/components/redes/TarjetaMapa.vue';
 
 //Inicializamos como un ref con redes de prueba
-//-------------------------------------------------------------------
+ //-------------------------------------------------------------------
 const listaDeDatos = ref([
   {
     nombreRed: 'Andared_Corporativo',
@@ -48,6 +101,12 @@ const listaDeDatos = ref([
 ]);
 //-------------------------------------------------------------------
 
+const mostrarAdministracion = ref(false);
+
+function mostrarMenu() {
+  mostrarAdministracion.value = !mostrarAdministracion.value;
+}
+
 
 //--------------Llamada a la API para pedir las redes(Ahora mismo no hay server asi que lo comento)----------------------
 /* async function pideDatos() {
@@ -65,15 +124,14 @@ const listaDeDatos = ref([
   } catch (error) {
     console.error("Hubo un error al obtener los datos:", error);
   }
-} */
+}
 
-/* onMounted(() => {
+onMounted(() => {
   pideDatos();
   setInterval(pideDatos, 20000)
-}); */
+});
 
-
-
+ */
 
 </script>
 
@@ -95,18 +153,61 @@ const listaDeDatos = ref([
   transition: background-color 0.3s ease;
 }
 
+li{
+  background-color: rgba(36, 36, 36, 0.63);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
 
-button{
-  border-radius: 50%;
-  height: 40px;
-  width: 40px;
-  position: absolute;
-  bottom: 30px;
-  right: 30px;
-  background-color: white;
+ul{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  list-style-type: none;
+  padding: 0;
+
+}
+
+.borrarred{
+  background-color: #FF4136;
+  color: white;
   border: none;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  padding: 5px 10px;
   cursor: pointer;
+}
+
+.administrar{
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+form{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.administracion{
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  background-color: #00000088;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 @media screen and (max-width: 768px){
