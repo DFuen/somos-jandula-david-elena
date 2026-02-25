@@ -57,4 +57,13 @@ public class RedesService {
         return listaRedesDTO;
     }
 
+    public void eliminarRed(String ssid){
+        List<Red> listaRedes = redRepository.findAll();
+        for(Red r : listaRedes){
+            if(ssid.equals(r.getSsid())){
+                redRepository.delete(r);
+            }
+        }
+    }
+
 }
