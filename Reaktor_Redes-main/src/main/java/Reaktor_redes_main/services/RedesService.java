@@ -24,8 +24,6 @@ public class RedesService {
 
         //COMPROBACIÓN DE ERRORES EN VACÍOS O NULL
         String ssid = nuevared.getSsid();
-        String usuario = nuevared.getUsuario();
-        System.out.println(usuario);
         String contrasena = nuevared.getPassword();
 
         for(Red r : listaRedes){
@@ -34,10 +32,10 @@ public class RedesService {
             }
         }
 
-        if(ssid.isEmpty() || contrasena.isEmpty() || usuario.isEmpty()){
+        if(ssid.isEmpty() || contrasena.isEmpty()){
             throw new RedesBadRequestException("La contraseña , el usuario o el SSID no pueden estar vacios");
         }
-        if(ssid==null || contrasena==null || usuario==null){
+        if(ssid==null || contrasena==null){
             throw new RedesBadRequestException("La contraseña , el usuario o el SSID no pueden estar nulo");
         }
         else{
