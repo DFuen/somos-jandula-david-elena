@@ -1,5 +1,7 @@
 package Reaktor_redes_main.controllers;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import Reaktor_redes_main.models.HistorialEstado;
 import Reaktor_redes_main.services.EstadoServices;
 
@@ -18,13 +20,15 @@ public class EstadoController {
 
 
     //Peticion de la ESP-32 para guardar el estado de la Red en la BD
-    @PostMapping
-    public ResponseEntity<?> registrarPrueba(@RequestBody HistorialEstado estado){
-       return ResponseEntity.status(200).body(estadoServices.registrarPrueba(estado));
-    }
+     @PostMapping
+     @PreAuthorize("hasRole('PROFESOR')")
+     public ResponseEntity<?> registrarPrueba(@RequestBody HistorialEstado estado){
+         return ResponseEntity.status(200).body(estadoServices.registrarPrueba(estado));
+     }
 
 
     @GetMapping
+    @PreAuthorize("hasRole('PROFESOR')")
     public ResponseEntity<?> consultarhistorial(){
         return ResponseEntity.status(200).body(estadoServices.consultarHistorial());
     }
