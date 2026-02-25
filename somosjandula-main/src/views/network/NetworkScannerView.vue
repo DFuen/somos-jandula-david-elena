@@ -11,6 +11,7 @@
   </div>
 
 
+
   <button class="administrar" type="button" @click="mostrarMenu">Administrar</button>
 
 
@@ -30,32 +31,34 @@
 
 
 
-
+<div>
     <form >
 
       <h4>Agregar nueva red</h4>
 
       <label for="nombreRed">Nombre de la Red:</label>
-      <input type="text" id="nombreRed" name="nombreRed">
+      <input type="text" id="nombreRed" name="nombreRed" placeholder="Ejemplo: Andared_Corporativo">
 
       <label for="password">Contraseña</label>
-      <input type="text" id="password" name="password">
+      <input type="password" id="password" name="password" placeholder="******">
 
       <label for="fecha_hora">Configuración de red:</label>
       <input id="configuracionred" name="configuracionred">
 
-      <button type="submit">Agregar Red</button>
+      <button id="newred" type="submit">Agregar Red</button>
 
     </form>
+    </div>
 
     <div>
       <h4>Establer tiempo de consulta de redes</h4>
 
-      <form>
+      <form id="establecerTiempo">
         <label for="tiempoConsulta">Tiempo de consulta:</label>
+        <div>
         <input type="number" id="tiempoConsulta" name="tiempoConsulta" min="1" max="3600"> <span>segundos</span>
-
-        <button type="submit">Establecer Tiempo</button>
+        </div>
+        <button id="establecer" type="submit">Establecer Tiempo</button>
       </form>
 
     </div>
@@ -154,11 +157,12 @@ onMounted(() => {
 }
 
 li{
-  background-color: rgba(36, 36, 36, 0.63);
+  background-color: rgba(15, 15, 15, 0.808);
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+  border-radius: 10px;
 }
 
 ul{
@@ -170,6 +174,21 @@ ul{
 
 }
 
+#newred{
+  background-color: #28a745;
+  color: white;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 10px;
+  cursor: pointer;
+  margin-top: 1.2em;
+}
+
+#newred:hover{
+  background-color: #1e7e34;
+}
+
 .borrarred{
   background-color: #FF4136;
   color: white;
@@ -177,6 +196,32 @@ ul{
   border-radius: 5px;
   padding: 5px 10px;
   cursor: pointer;
+  margin-left: 20px;
+}
+
+h4{
+  margin-bottom: 30px;
+  color:#61adff;
+  font-weight: bold;
+}
+
+input{
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+
+
+.borrarred:hover{
+  background-color: #a00a0a;
+}
+
+#tiempoConsulta{
+  padding: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100px;
 }
 
 .administrar{
@@ -198,16 +243,22 @@ form{
 }
 
 .administracion{
+  border-radius: 30px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 30px;
   position: fixed;
   bottom: 80px;
   right: 20px;
-  background-color: #00000088;
+  background-color: #00000042;
   padding: 20px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+}
+
+.administracion div{
+  background-color: #1f1f1f;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px
 }
 
 @media screen and (max-width: 768px){
