@@ -27,18 +27,40 @@
 		<url/>
 	</scm>
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-validation</artifactId>
-		</dependency>
+		   <!--
+			   Excluimos spring-boot-starter-security para evitar el error 401 por seguridad automática de Spring Boot.
+			   Si quieres volver a activar la seguridad, elimina la sección <exclusions> de esta dependencia y de las siguientes.
+		   -->
+		   <dependency>
+			   <groupId>org.springframework.boot</groupId>
+			   <artifactId>spring-boot-starter-web</artifactId>
+			   <exclusions>
+				   <exclusion>
+					   <groupId>org.springframework.boot</groupId>
+					   <artifactId>spring-boot-starter-security</artifactId>
+				   </exclusion>
+			   </exclusions>
+		   </dependency>
+		   <dependency>
+			   <groupId>org.springframework.boot</groupId>
+			   <artifactId>spring-boot-starter-data-jpa</artifactId>
+			   <exclusions>
+				   <exclusion>
+					   <groupId>org.springframework.boot</groupId>
+					   <artifactId>spring-boot-starter-security</artifactId>
+				   </exclusion>
+			   </exclusions>
+		   </dependency>
+		   <dependency>
+			   <groupId>org.springframework.boot</groupId>
+			   <artifactId>spring-boot-starter-validation</artifactId>
+			   <exclusions>
+				   <exclusion>
+					   <groupId>org.springframework.boot</groupId>
+					   <artifactId>spring-boot-starter-security</artifactId>
+				   </exclusion>
+			   </exclusions>
+		   </dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
@@ -64,5 +86,24 @@
 			</plugin>
 		</plugins>
 	</build>
-
-</project>
+		<!-- Perfil para compilar este módulo sin spring-boot-starter-security -->
+		<profiles>
+			<profile>
+				<id>sin-seguridad</id>
+				<dependencies>
+					<dependency>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-security</artifactId>
+						<scope>provided</scope>
+						<optional>true</optional>
+						<exclusions>
+							<exclusion>
+								<groupId>*</groupId>
+								<artifactId>*</artifactId>
+							</exclusion>
+						</exclusions>
+					</dependency>
+				</dependencies>
+			</profile>
+		</profiles>
+	</project>
