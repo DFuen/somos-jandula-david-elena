@@ -23,6 +23,13 @@ public class RedesController {
         return ResponseEntity.status(200).body(redesService.altaRed(nuevared) + "Red creada con exito y guardada en la BD");
     }
 
+    @DeleteMapping
+    @PreAuthorize("hasRole('PROFESOR')")
+    public ResponseEntity<?> eliminarRed(@RequestBody String ssid){
+        redesService.eliminarRed(ssid);
+        return ResponseEntity.status(200).body("Red eliminada con exito");
+    }
+
     //Listar la información de las redes guardadas
     @GetMapping
     @PreAuthorize("hasRole('PROFESOR')")
