@@ -2,8 +2,8 @@
     <div class="card" :class="{ 'borderojo': props.estado === 'SIN_SENAL', 'bordeverde': props.estado === 'CONECTADO', 'bordeamarillo': props.estado === 'FALLO_AUTH' }">
         <h3>{{ nombreRed }}</h3>
         <p class="estado" :class="{ 'textrojo': props.estado === 'SIN_SENAL', 'textverde': props.estado === 'CONECTADO', 'textamarillo': props.estado === 'FALLO_AUTH' }">{{ estado }}</p>
-        <p class="fecha">{{ fecha}}</p>
-        <p class="fecha">{{ hora }}</p>
+        <p class="fecha"><img src="/img/fecha.png" alt="Calendario">{{ fecha}}</p>
+        <p class="fecha"><img src="/img/hora.png" alt="Reloj">{{ hora }}</p>
     </div>
 </template>
 
@@ -20,6 +20,13 @@ const props = defineProps({
 </script>
 
 <style scoped>
+
+.fecha img{
+    width: 20px;
+    height: 20px;
+    margin-right: 9px;
+    display: none;
+}
 .card {
     box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.603);
     border: 2px solid #ccc;
@@ -64,14 +71,26 @@ p {
     background-color: #c202026e;
 }
 
+.borderojo img{
+    display: inline-block;
+}
+
 .bordeverde{
     border-color: rgb(39, 231, 81);
     background-color:  rgba(7, 194, 54, 0.582);
 }
 
+.bordeverde img{
+    display: inline-block;
+}
+
 .bordeamarillo{
     border-color: #f0c400;
     background-color: #dba800e1;
+}
+
+.bordeamarillo img{
+    display: inline-block;
 }
 
 .textverde{

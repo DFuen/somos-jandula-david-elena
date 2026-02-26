@@ -5,7 +5,7 @@
       :fecha="item.fecha" :hora="item.hora" />
   </div>
 
-  <button class="administrar" type="button" @click="mostrarMenu">Administrar</button>
+  <button class="administrar" type="button" @click="mostrarMenu"><img class="icono-administrar" src="/img/engranaje.png"> Administrar</button>
 
   <div class="administracion" v-show="mostrarAdministracion">
 
@@ -14,7 +14,7 @@
       <ul>
         <li v-for="item in listaRedes" :key="item.ssid">
           <span>{{ item.ssid }} </span><button class="borrarred" :id="item.ssid"
-            @click="borrarRed(item.ssid)">Borrar</button>
+            @click="solicitarBorrado(item.ssid)">Borrar</button>
         </li>
       </ul>
     </div>
@@ -24,15 +24,18 @@
 
         <h4>Agregar nueva red</h4>
 
-        <label for="ssid">Nombre de la Red:</label>
+        <label for="ssid">Nombre de la Red: <span style="color: red;">*</span></label> 
         <input type="text" id="ssid" name="ssid" placeholder="Ejemplo: Andared_Corporativo"
           v-model.trim="nuevaRed.ssid" required>
 
-        <label for="password">Contraseña</label>
+        <label for="password">Contraseña <span style="color: red;">*</span> </label>
         <input type="password" id="password" name="password" placeholder="******" v-model="nuevaRed.password" required>
 
-        <label for="configuracion">Configuración de red:</label>
-        <input id="configuracion" name="configuracion" v-model.trim="nuevaRed.seguridad" required>
+        <label for="usuario">Usuario:</label>
+        <input type="text" id="usuario" name="usuario" placeholder="Usuario de la red" v-model.trim="nuevaRed.usuario">
+
+        <label for="configuracion">Configuración de red: <span style="color: red;">*</span></label>
+        <textarea class="configuracionred" id="configuracion" name="configuracion" v-model.trim="nuevaRed.seguridad" required></textarea>
 
         <button id="newred" type="submit">Agregar Red</button>
 
@@ -53,6 +56,16 @@
 
     </div>
 
+  </div>
+
+  <div v-if="mostrarConfirmacionBorrado" class="modal-overlay">
+    <div class="modal-confirmacion">
+      <p>¿Estás seguro?</p>
+      <div class="acciones-modal">
+        <button class="btn-cancelar" type="button" @click="cancelarBorrado">Cancelar</button>
+        <button class="btn-confirmar" type="button" @click="confirmarBorrado">Borrar</button>
+      </div>
+    </div>
   </div>
 
 
@@ -78,6 +91,8 @@ const nuevaRed = ref({
   seguridad: ''
 });
 const tiempoConsulta = ref(null);
+const mostrarConfirmacionBorrado = ref(false);
+const redPendienteDeBorrado = ref('');
 
 function mostrarMenu() {
   mostrarAdministracion.value = !mostrarAdministracion.value;
@@ -125,6 +140,26 @@ async function listarRedes() {
   }
 }
 
+function solicitarBorrado(ssid) {
+  redPendienteDeBorrado.value = ssid;
+  mostrarConfirmacionBorrado.value = true;
+}
+
+function cancelarBorrado() {
+  redPendienteDeBorrado.value = '';
+  mostrarConfirmacionBorrado.value = false;
+}
+
+async function confirmarBorrado() {
+  const ssid = redPendienteDeBorrado.value;
+  mostrarConfirmacionBorrado.value = false;
+  redPendienteDeBorrado.value = '';
+
+  if (ssid) {
+    await borrarRed(ssid);
+  }
+}
+
 //-----------------Llamada a la API para borrar una red----------------------
 async function borrarRed(ssid) {
   try {
@@ -167,7 +202,7 @@ async function enviarNuevaRed() {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
 
-    nuevaRed.value = { ssid: '', password: '', seguridad: '' };
+    nuevaRed.value = { ssid: '', password: '', usuario:'', seguridad: '' };
     
     await listarRedes();
     await datosRedes();
@@ -177,9 +212,6 @@ async function enviarNuevaRed() {
     crearToast(toastMessage, toastColor, isToastOpen, 'danger', error.message || 'Error al agregar la red');
   }
 }
-
-
-
 
 
 </script>
@@ -194,7 +226,6 @@ async function enviarNuevaRed() {
   margin: 0;
   padding: 50px;
   width: 100%;
-  height: 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
@@ -281,6 +312,10 @@ input {
   cursor: pointer;
 }
 
+.administrar:hover {
+  background-color: #0056b3;
+}
+
 form {
   display: flex;
   flex-direction: column;
@@ -306,6 +341,74 @@ form {
   width: 400px
 }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-confirmacion {
+  background-color: #1f1f1f;
+  padding: 20px;
+  border-radius: 12px;
+  min-width: 280px;
+  text-align: center;
+  color: #fff;
+}
+
+.acciones-modal {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-cancelar,
+.btn-confirmar {
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+
+.btn-cancelar {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-confirmar {
+  background-color: #FF4136;
+  color: white;
+}
+
+#establecer{
+  background-color: #28a745;
+  color: white;
+  font-size: 1.2em;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 10px;
+  cursor: pointer;
+}
+
+#establecer:hover {
+  background-color: #1e7e34;
+}
+
+.configuracionred {
+  height: 5em;
+}
+
+.icono-administrar {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
 @media screen and (max-width: 768px) {
 
   .contenedor {
@@ -317,6 +420,7 @@ form {
 
 
   .administracion {
+    top: -20;
     flex-direction: column;
     width: 90%;
     right: 5%;

@@ -24,6 +24,9 @@ public class Red {
     @NotBlank
     private String ssid;
 
+    @Column
+    private String usuario;
+
     @Column(nullable = false)
     @NotNull
     @NotBlank

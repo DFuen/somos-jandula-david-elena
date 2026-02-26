@@ -1,11 +1,14 @@
 package Reaktor_redes_main.services;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.Locale;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,7 +56,7 @@ public List<EstadoDTO> consultarHistorial() {
             ? new EstadoDTO(
                 ultimoRegistro.getSsid(),
                 ultimoRegistro.getEstado(),
-                pasaraFecha(ultimoRegistro.getFechaReporte()),
+                pasarAFecha(ultimoRegistro.getFechaReporte()),
                 pasaraHora(ultimoRegistro.getFechaReporte())
             )
             : new EstadoDTO(
@@ -70,16 +73,28 @@ public List<EstadoDTO> consultarHistorial() {
 }
 
 
-    public String pasaraFecha(Timestamp fechahora){
-        if (fechahora == null) {
-            return null;
-        }
-
-        //Convierte el Timestamp a String y devuelve solo la parte de la fecha (sin la hora)
-        return fechahora.toString().substring(0, 10);
-
+public String pasarAFecha(Timestamp fechahora) {
+    if (fechahora == null) {
+        return null;
     }
 
+    LocalDateTime fecha = fechahora.toLocalDateTime();
+
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
+            "EEEE, d 'de' MMMM 'de' yyyy",
+            new Locale("es", "ES")
+    );
+
+    String fechaFormateada = fecha.format(formatter);
+
+    // Poner primera letra en mayúscula
+    return fechaFormateada.substring(0,1).toUpperCase()
+            + fechaFormateada.substring(1);
+}
+
+
+
+//Pasar a hora
     public String pasaraHora(Timestamp fechahora){
         if (fechahora == null) {
             return null;
