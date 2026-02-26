@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface HistorialRepository extends JpaRepository<HistorialEstado, Long> {
     List<HistorialEstado> findBySsid(String ssid);
+    HistorialEstado findTop1BySsidOrderByFechaReporteDesc(String ssid);
 }

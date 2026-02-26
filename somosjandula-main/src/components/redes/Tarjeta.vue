@@ -2,7 +2,8 @@
     <div class="card" :class="{ 'borderojo': props.estado === 'SIN_SENAL', 'bordeverde': props.estado === 'CONECTADO', 'bordeamarillo': props.estado === 'FALLO_AUTH' }">
         <h3>{{ nombreRed }}</h3>
         <p class="estado" :class="{ 'textrojo': props.estado === 'SIN_SENAL', 'textverde': props.estado === 'CONECTADO', 'textamarillo': props.estado === 'FALLO_AUTH' }">{{ estado }}</p>
-        <p class="fecha">{{ fecha_hora }}</p>
+        <p class="fecha">{{ fecha}}</p>
+        <p class="fecha">{{ hora }}</p>
     </div>
 </template>
 
@@ -11,7 +12,8 @@
 const props = defineProps({
     nombreRed: String,
     estado: String,
-    fecha_hora: String
+    fecha: String,
+    hora: String
 });
 
 

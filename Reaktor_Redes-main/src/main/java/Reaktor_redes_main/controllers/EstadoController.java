@@ -21,7 +21,6 @@ public class EstadoController {
 
     //Peticion de la ESP-32 para guardar el estado de la Red en la BD
      @PostMapping
-     @PreAuthorize("hasRole('PROFESOR')")
      public ResponseEntity<?> registrarPrueba(@RequestBody HistorialEstado estado){
          return ResponseEntity.status(200).body(estadoServices.registrarPrueba(estado));
      }

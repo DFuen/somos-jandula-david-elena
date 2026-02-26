@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "http://localhost:5173") //Para que el navegador me deje conectarlo a Vue
 @RestController
 @RequestMapping("/configuracion-redes")
 public class RedesController {
@@ -23,16 +24,15 @@ public class RedesController {
         return ResponseEntity.status(200).body(redesService.altaRed(nuevared) + "Red creada con exito y guardada en la BD");
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{ssid}")
     @PreAuthorize("hasRole('PROFESOR')")
-    public ResponseEntity<?> eliminarRed(@RequestBody String ssid){
+    public ResponseEntity<?> eliminarRed(@PathVariable String ssid){
         redesService.eliminarRed(ssid);
         return ResponseEntity.status(200).body("Red eliminada con exito");
     }
 
     //Listar la información de las redes guardadas
     @GetMapping
-    @PreAuthorize("hasRole('PROFESOR')")
     public ResponseEntity<?> listarObjetivos(){
         //RETORNAMOS LA LISTA A AUDITAR PARA EL HARDWARE
         return ResponseEntity.status(200).body(redesService.listarObjetivos());
