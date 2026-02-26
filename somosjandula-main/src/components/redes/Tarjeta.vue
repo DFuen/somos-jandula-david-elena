@@ -22,13 +22,12 @@ const props = defineProps({
 <style scoped>
 .card {
     box-shadow: 2px 2px 20px rgba(0, 0, 0, 0.603);
-    border: 1px solid #ccc;
+    border: 2px solid #ccc;
     padding: 20px;
+    background-color: #5c5c5cce;
     border-radius: 20px;
     color: #333;
     border: 5px solid;
-    max-height: max-content;
-    min-width: max-content;
     transition: border-color 0.8s ease, background-color 0.8s ease, color 0.8s ease;
 }
 
@@ -66,13 +65,13 @@ p {
 }
 
 .bordeverde{
-    border-color: rgb(39, 231, 125);
-    background-color:  rgba(7, 194, 54, 0.445);
+    border-color: rgb(39, 231, 81);
+    background-color:  rgba(7, 194, 54, 0.582);
 }
 
 .bordeamarillo{
-    border-color: #f0ec00;
-    background-color: #ecf00073;
+    border-color: #f0c400;
+    background-color: #dba800e1;
 }
 
 .textverde{
