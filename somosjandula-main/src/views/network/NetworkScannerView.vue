@@ -5,9 +5,9 @@
       :fecha="item.fecha" :hora="item.hora" />
   </div>
 
-  <button class="administrar" type="button" @click="mostrarMenu"><img class="icono-administrar" src="/img/engranaje.png"> Administrar</button>
+  <button ref="administrarButtonRef" class="administrar" type="button" @click="mostrarMenu"><img class="icono-administrar" src="/img/engranaje.png"> Administrar</button>
 
-  <div class="administracion" v-show="mostrarAdministracion">
+  <div ref="administracionRef" class="administracion" v-show="mostrarAdministracion">
 
     <div>
       <h4>Lista de redes disponibles</h4>
@@ -42,14 +42,13 @@
       </form>
     </div>
 
-    <div>
+    <div class="divtiempo">
       <h4>Establer tiempo de consulta de redes</h4>
 
       <form id="establecerTiempo" @submit.prevent="enviarTiempoConsulta">
         <label for="tiempoConsulta">Tiempo de consulta:</label>
         <div>
-          <input type="number" id="tiempoConsulta" name="tiempoConsulta" min="1" max="3600"
-            v-model.number="tiempoConsulta" required> <span>segundos</span>
+          <input type="number" id="tiempoConsulta" name="tiempoConsulta" min="1" v-model.number="tiempoConsulta" required> <span>segundos</span>
         </div>
         <button id="establecer" type="submit">Establecer Tiempo</button>
       </form>
@@ -72,12 +71,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import Tarjeta from '../../components/redes/Tarjeta.vue'
 import { obtenerTokenJWTValido } from '@/services/firebaseService'
 import { crearToast } from '@/utils/toast.js'
 
-const temporizador = 11000;
+const temporizadorMs = ref(11000);
+const tiempoConsulta = ref(11);
+const intervalId = ref(null);
+const administracionRef = ref(null);
+const administrarButtonRef = ref(null);
 const apiUrl = 'http://localhost:8084';
 const listaDeDatos = ref([]);
 const listaRedes = ref([]);
@@ -90,7 +93,6 @@ const nuevaRed = ref({
   password: '',
   seguridad: ''
 });
-const tiempoConsulta = ref(null);
 const mostrarConfirmacionBorrado = ref(false);
 const redPendienteDeBorrado = ref('');
 
@@ -98,6 +100,18 @@ function mostrarMenu() {
   mostrarAdministracion.value = !mostrarAdministracion.value;
     listarRedes();
 }
+
+const handleClickOutside = (event) => {
+  if (!mostrarAdministracion.value) return;
+  const target = event.target;
+  const adminEl = administracionRef.value;
+  const buttonEl = administrarButtonRef.value;
+
+  if (adminEl && adminEl.contains(target)) return;
+  if (buttonEl && buttonEl.contains(target)) return;
+
+  mostrarAdministracion.value = false;
+};
 
 //--------------Llamada a la API para pedir las redes(Ahora mismo no hay server asi que lo comento)----------------------
 async function datosRedes() {
@@ -116,10 +130,26 @@ async function datosRedes() {
   }
 }
 
+const startInterval = () => {
+  if (intervalId.value !== null) {
+    window.clearInterval(intervalId.value);
+  }
+  intervalId.value = window.setInterval(datosRedes, temporizadorMs.value);
+};
+
 onMounted(() => {
   listarRedes();
   datosRedes();
-  setInterval(datosRedes, temporizador)
+  startInterval();
+  document.addEventListener('click', handleClickOutside);
+});
+
+onBeforeUnmount(() => {
+  if (intervalId.value !== null) {
+    window.clearInterval(intervalId.value);
+    intervalId.value = null;
+  }
+  document.removeEventListener('click', handleClickOutside);
 });
 
 
@@ -213,6 +243,20 @@ async function enviarNuevaRed() {
   }
 }
 
+//-----------------Establecer tiempo de consulta----------------------
+function enviarTiempoConsulta() {
+  const nuevoTiempo = tiempoConsulta.value;
+
+  if (!Number.isFinite(nuevoTiempo) || nuevoTiempo < 1) {
+    crearToast(toastMessage, toastColor, isToastOpen, 'danger', 'Por favor, ingresa un número válido mayor a 0');
+    return;
+  }
+
+  temporizadorMs.value = nuevoTiempo * 1000;
+  startInterval();
+  crearToast(toastMessage, toastColor, isToastOpen, 'success', `Tiempo de consulta establecido a ${nuevoTiempo} segundos`);
+  console.log(`Nuevo tiempo de consulta: ${temporizadorMs.value} ms`);
+}
 
 </script>
 
@@ -233,7 +277,7 @@ async function enviarNuevaRed() {
 }
 
 li {
-  background-color: rgba(15, 15, 15, 0.808);
+  background-color: rgba(0, 0, 0, 0.89);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -279,6 +323,7 @@ h4 {
   margin-bottom: 30px;
   color: #61adff;
   font-weight: bold;
+  font-size:x-large;
 }
 
 input {
@@ -326,16 +371,17 @@ form {
   border-radius: 30px;
   display: flex;
   flex-direction: row;
+  align-items: end;
   gap: 30px;
   position: fixed;
   bottom: 80px;
   right: 20px;
-  background-color: #00000042;
   padding: 20px;
 }
 
 .administracion div {
-  background-color: #1f1f1f;
+  backdrop-filter: blur(12px);
+  background-color: #0a0a0abe;
   padding: 20px;
   border-radius: 10px;
   width: 400px
@@ -407,6 +453,10 @@ form {
   width: 20px;
   height: 20px;
   margin-right: 10px;
+}
+
+.divtiempo{
+  max-height: 400px;
 }
 
 @media screen and (max-width: 768px) {

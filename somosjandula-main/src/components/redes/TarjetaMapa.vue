@@ -4,7 +4,6 @@
             <div class="divestado" :class="{ 'divrojo': props.estado === 'SIN_SENAL', 'divverde': props.estado === 'CONECTADO', 'divamarillo': props.estado === 'FALLO_AUTH' }"></div>
             <h3>{{ nombreRed }}</h3>
         </div> 
-    <p class="fecha">{{ fecha_hora }}</p>
     </div>
 </template>
 
@@ -13,8 +12,7 @@ import { computed } from 'vue';
 
 const props = defineProps({
     nombreRed: String,
-    estado: String,
-    fecha_hora: String
+    estado: String
 });
 
 
@@ -39,21 +37,22 @@ h3{
 }
 
 .card{
-    background-color: rgba(255, 255, 255, 0.842);
+    backdrop-filter: blur(4px);
+    background-color: rgba(255, 255, 255, 0.575);
     border-radius: 20px;
     display: flex;
     flex-direction: row;
-    padding: 7px;
+    padding: 7px 10px;
     align-items: center;
     gap: 10px;
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
     justify-content: space-between;
+    
 }
 
 
 
 .divestado{
-    margin-left: 3px;
     width: 17px;
     height: 17px;
     border-radius: 50%;

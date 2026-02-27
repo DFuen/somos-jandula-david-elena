@@ -162,7 +162,6 @@
             :key="item.nombreRed"
             :nombreRed="item.nombreRed"
             :estado="item.estado"
-            :fecha_hora="item.fecha_hora"
           />
           </div>
   </div>
@@ -194,7 +193,6 @@
             :key="item.nombreRed"
             :nombreRed="item.nombreRed"
             :estado="item.estado"
-            :fecha_hora="item.fecha_hora"
           />
           </div>
 
@@ -218,14 +216,13 @@
           <span v-if="doorDotState(id)" class="door-dot" :class="doorDotState(id)"></span>
         </div>
 
-                      <!--Vista del estado de las redes -->
+        <!--Vista del estado de las redes -->
         <div class="vistaRedesPlantaSegunda vistaRedes">
             <TarjetaMapa
             v-for="item in listaDeDatos"
             :key="item.nombreRed"
             :nombreRed="item.nombreRed"
             :estado="item.estado"
-            :fecha_hora="item.fecha_hora"
           />
           </div>
 
@@ -245,37 +242,37 @@ import {
 } from '@/services/schoolBaseServer'
 import TarjetaMapa from '@/components/redes/TarjetaMapa.vue'
 
+const apiUrl = 'http://localhost:8084';
 //Tarjetas de Estado de Red-----------------------------------------
 
+type RedItem = {
+  nombreRed: string
+  estado: string
+}
+
+const listaDeDatos = ref<RedItem[]>([])
+
 //Datos de prueba
-const listaDeDatos = ref([
-  {
-    nombreRed: 'Andared_Corporativo',
-    estado: 'CONECTADO',
-    fecha_hora: '2026-02-03 09:15'
-  },
-  {
-    nombreRed: 'Buscando...',
-    estado: 'FALLO_AUTH',
-    fecha_hora: '2026-02-03 08:40'
-  },
-  {
-    nombreRed: 'Cargando...+',
-    estado: 'SIN_SENAL',
-    fecha_hora: '2026-02-03 07:55'
-  },
-    {
-    nombreRed: 'Andared_IoT',
-    estado: 'SIN_SENAL',
-    fecha_hora: '2026-02-03 07:55'
-  },
-  {
-    nombreRed: 'Andared',
-    estado: 'CONECTADO',
-    fecha_hora: '2026-02-03 07:55'
+async function datosRedes() {
+  try {
+    const response = await fetch(`${apiUrl}/registros-redes`);
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    const myData = await response.json();
+
+    listaDeDatos.value = myData;
+
+  } catch (error) {
+    console.error("Hubo un error al obtener los datos:", error);
   }
-  
-]);
+}
+
+onMounted(() => {
+  datosRedes();
+  setInterval(datosRedes, 10000)
+});
 
 //----------------------------------------------------------------------------------------------------------
 

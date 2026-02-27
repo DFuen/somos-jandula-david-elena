@@ -47,12 +47,12 @@ h3 {
 }
 
 .estado{
-    background-color: #252525;
+    background-color: #161616;
     border-radius: 20px;
-    padding: 10px;
+    padding: 9px 17px;
     font-weight: bolder;
     width: fit-content;
-    box-shadow: 1px 1px 5px #000000;
+    box-shadow: 1px 1px 5px #0000008e;
     color: white;
     transition: color 0.8s ease, background-color 0.8s ease;
 }
@@ -68,7 +68,7 @@ p {
 
 .borderojo{
     border-color: #c20202;
-    background-color: #c202026e;
+    background-color: #810909b2;
 }
 
 .borderojo img{
@@ -77,7 +77,7 @@ p {
 
 .bordeverde{
     border-color: rgb(39, 231, 81);
-    background-color:  rgba(7, 194, 54, 0.582);
+    background-color:  rgba(7, 194, 54, 0.712);
 }
 
 .bordeverde img{
