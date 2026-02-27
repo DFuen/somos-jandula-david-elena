@@ -113,10 +113,16 @@ color: #f0ad00;
 
 h3{
 font-size: 1.8em;
+margin: 0;
 }
 
+.estado{
+    font-size: 0.9em;
+    padding: 5px 10px;
+}
 
-
-
+.fecha{
+    font-size: 1em;
+}
 }
 </style>

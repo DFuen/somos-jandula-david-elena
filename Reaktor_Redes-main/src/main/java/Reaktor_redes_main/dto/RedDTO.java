@@ -12,5 +12,5 @@ import lombok.Setter;
 public class RedDTO {
     private String SSID;
     private String password;
-    private String configuration; /* MODIFICAR CUANTO TENGAMOS OBJETO*/
+    private String configuration;
 }

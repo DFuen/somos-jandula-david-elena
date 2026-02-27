@@ -43,9 +43,9 @@
     </div>
 
     <div class="divtiempo">
-      <h4>Establer tiempo de consulta de redes</h4>
 
       <form id="establecerTiempo" @submit.prevent="enviarTiempoConsulta">
+              <h4>Establer tiempo de consulta de redes</h4>
         <label for="tiempoConsulta">Tiempo de consulta:</label>
         <div>
           <input type="number" id="tiempoConsulta" name="tiempoConsulta" min="1" v-model.number="tiempoConsulta" required> <span>segundos</span>
@@ -116,7 +116,12 @@ const handleClickOutside = (event) => {
 //--------------Llamada a la API para pedir las redes(Ahora mismo no hay server asi que lo comento)----------------------
 async function datosRedes() {
   try {
-    const response = await fetch(`${apiUrl}/registros-redes`);
+    const token = await obtenerTokenJWTValido(toastMessage, toastColor, isToastOpen);
+    const response = await fetch(`${apiUrl}/registros-redes`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
@@ -156,7 +161,12 @@ onBeforeUnmount(() => {
 //-----------------Llamada a la API para ver la lista de redes----------------------
 async function listarRedes() {
   try {
-    const response = await fetch(`${apiUrl}/configuracion-redes`);
+    const token = await obtenerTokenJWTValido(toastMessage, toastColor, isToastOpen);
+    const response = await fetch(`${apiUrl}/configuracion-redes`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }
@@ -470,11 +480,33 @@ form {
 
 
   .administracion {
-    top: -20;
-    flex-direction: column;
-    width: 90%;
-    right: 5%;
+    margin: 0;
+    left: 0;
+    right: 0;
     bottom: 80px;
+    flex-direction: column;
+    width: 100%;
+    font-size: 0.9em;
+    gap: 5px;
+    max-height: calc(100vh - 140px);
+    padding-bottom: 20px;
+    overflow-y: auto;
+    padding: 12px;
+    box-sizing: border-box;
+  }
+
+  .administracion div {
+    margin: 0;
+    width: 100%;
+  }
+
+  .divtiempo form h4{
+    display: flex;
+    margin-bottom: 0;
+  }
+
+  h4{
+    font-size: large;
   }
 
 }

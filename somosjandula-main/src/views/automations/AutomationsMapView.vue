@@ -233,6 +233,7 @@
 
 <script setup lang="ts">
 import { computed, ref, onBeforeUnmount, onMounted } from 'vue'
+import { obtenerTokenJWTValido } from '@/services/firebaseService'
 import { obtenerDispositivos, } from '@/services/automations'
 import {
   obtenerCursosAcademicos,
@@ -255,7 +256,12 @@ const listaDeDatos = ref<RedItem[]>([])
 //Datos de prueba
 async function datosRedes() {
   try {
-    const response = await fetch(`${apiUrl}/registros-redes`);
+    const token = await obtenerTokenJWTValido(toastMessage, toastColor, isToastOpen)
+    const response = await fetch(`${apiUrl}/registros-redes`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
     if (!response.ok) {
       throw new Error(`Error ${response.status}: ${response.statusText}`);
     }

@@ -27,7 +27,7 @@ public class EstadoController {
 
 
     @GetMapping
-    @PreAuthorize("hasRole('PROFESOR')")
+    @PreAuthorize("hasAnyAuthority('PROFESOR', 'ROLE_PROFESOR')")
     public ResponseEntity<?> consultarhistorial(){
         return ResponseEntity.status(200).body(estadoServices.consultarHistorial());
     }
