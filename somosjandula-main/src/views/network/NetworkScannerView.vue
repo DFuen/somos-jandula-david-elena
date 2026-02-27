@@ -5,9 +5,9 @@
       :fecha="item.fecha" :hora="item.hora" />
   </div>
 
-  <button ref="administrarButtonRef" class="administrar" type="button" @click="mostrarMenu"><img class="icono-administrar" src="/img/engranaje.png"> Administrar</button>
+  <button ref="botonAdministrarRef" class="administrar" type="button" @click="mostrarMenu"><img class="icono-administrar" src="/img/engranaje.png"> Administrar</button>
 
-  <div ref="administracionRef" class="administracion" v-show="mostrarAdministracion">
+  <div ref="menuAdministracionRef" class="administracion" v-show="mostrarAdministracion">
 
     <div>
       <h4>Lista de redes disponibles</h4>
@@ -43,12 +43,13 @@
     </div>
 
     <div class="divtiempo">
+      <h4>Establer tiempo de consulta de redes</h4>
 
       <form id="establecerTiempo" @submit.prevent="enviarTiempoConsulta">
-              <h4>Establer tiempo de consulta de redes</h4>
         <label for="tiempoConsulta">Tiempo de consulta:</label>
-        <div>
-          <input type="number" id="tiempoConsulta" name="tiempoConsulta" min="1" v-model.number="tiempoConsulta" required> <span>segundos</span>
+        <div class="inputtiempo">
+          <input type="number" id="tiempoConsulta" name="tiempoConsulta" min="1" max="3600"
+            v-model.number="tiempoConsulta" required> <span>segundos</span>
         </div>
         <button id="establecer" type="submit">Establecer Tiempo</button>
       </form>
@@ -67,20 +68,15 @@
     </div>
   </div>
 
-
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import Tarjeta from '../../components/redes/Tarjeta.vue'
 import { obtenerTokenJWTValido } from '@/services/firebaseService'
 import { crearToast } from '@/utils/toast.js'
 
-const temporizadorMs = ref(11000);
-const tiempoConsulta = ref(11);
-const intervalId = ref(null);
-const administracionRef = ref(null);
-const administrarButtonRef = ref(null);
+const temporizador = ref(11000);
 const apiUrl = 'http://localhost:8084';
 const listaDeDatos = ref([]);
 const listaRedes = ref([]);
@@ -88,6 +84,7 @@ const mostrarAdministracion = ref(false);
 const toastMessage = ref('');
 const toastColor = ref('success');
 const isToastOpen = ref(false);
+const tiempoConsulta = ref(11);
 const nuevaRed = ref({
   ssid: '',
   password: '',
@@ -95,28 +92,58 @@ const nuevaRed = ref({
 });
 const mostrarConfirmacionBorrado = ref(false);
 const redPendienteDeBorrado = ref('');
+const menuAdministracionRef = ref(null);
+const botonAdministrarRef = ref(null);
+const intervalId = ref(null);
+
+onMounted(() => {
+  listarRedes();
+  datosRedes();
+  iniciarTemporizadorConsultas();
+  document.addEventListener('click', cerrarMenuSiClickFuera)
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', cerrarMenuSiClickFuera)
+  if (intervalId.value) {
+    clearInterval(intervalId.value);
+  }
+});
+
+function iniciarTemporizadorConsultas() {
+  if (intervalId.value) {
+    clearInterval(intervalId.value);
+  }
+
+  intervalId.value = setInterval(datosRedes, temporizador.value);
+}
+
+function cerrarMenuSiClickFuera(event) {
+  if (!mostrarAdministracion.value) {
+    return;
+  }
+
+  const target = event.target;
+  const clickDentroMenu = menuAdministracionRef.value?.contains(target);
+  const clickEnBoton = botonAdministrarRef.value?.contains(target);
+
+  if (!clickDentroMenu && !clickEnBoton) {
+    mostrarAdministracion.value = false;
+  }
+}
+
 
 function mostrarMenu() {
   mostrarAdministracion.value = !mostrarAdministracion.value;
     listarRedes();
 }
 
-const handleClickOutside = (event) => {
-  if (!mostrarAdministracion.value) return;
-  const target = event.target;
-  const adminEl = administracionRef.value;
-  const buttonEl = administrarButtonRef.value;
 
-  if (adminEl && adminEl.contains(target)) return;
-  if (buttonEl && buttonEl.contains(target)) return;
-
-  mostrarAdministracion.value = false;
-};
-
-//--------------Llamada a la API para pedir las redes(Ahora mismo no hay server asi que lo comento)----------------------
+//--------------Llamada a la API para pedir las redes----------------------
 async function datosRedes() {
   try {
     const token = await obtenerTokenJWTValido(toastMessage, toastColor, isToastOpen);
+
     const response = await fetch(`${apiUrl}/registros-redes`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -135,33 +162,12 @@ async function datosRedes() {
   }
 }
 
-const startInterval = () => {
-  if (intervalId.value !== null) {
-    window.clearInterval(intervalId.value);
-  }
-  intervalId.value = window.setInterval(datosRedes, temporizadorMs.value);
-};
-
-onMounted(() => {
-  listarRedes();
-  datosRedes();
-  startInterval();
-  document.addEventListener('click', handleClickOutside);
-});
-
-onBeforeUnmount(() => {
-  if (intervalId.value !== null) {
-    window.clearInterval(intervalId.value);
-    intervalId.value = null;
-  }
-  document.removeEventListener('click', handleClickOutside);
-});
-
 
 //-----------------Llamada a la API para ver la lista de redes----------------------
 async function listarRedes() {
   try {
     const token = await obtenerTokenJWTValido(toastMessage, toastColor, isToastOpen);
+
     const response = await fetch(`${apiUrl}/configuracion-redes`, {
       headers: {
         Authorization: `Bearer ${token}`
@@ -253,20 +259,21 @@ async function enviarNuevaRed() {
   }
 }
 
-//-----------------Establecer tiempo de consulta----------------------
-function enviarTiempoConsulta() {
-  const nuevoTiempo = tiempoConsulta.value;
 
-  if (!Number.isFinite(nuevoTiempo) || nuevoTiempo < 1) {
-    crearToast(toastMessage, toastColor, isToastOpen, 'danger', 'Por favor, ingresa un número válido mayor a 0');
+//-----------------Guardar el tiempo de consulta y modificar constante de tiempo----------------------
+function enviarTiempoConsulta() {
+  if (!tiempoConsulta.value || tiempoConsulta.value < 1) {
+    crearToast(toastMessage, toastColor, isToastOpen, 'danger', 'El tiempo debe ser mayor que 0 segundos');
     return;
   }
 
-  temporizadorMs.value = nuevoTiempo * 1000;
-  startInterval();
-  crearToast(toastMessage, toastColor, isToastOpen, 'success', `Tiempo de consulta establecido a ${nuevoTiempo} segundos`);
-  console.log(`Nuevo tiempo de consulta: ${temporizadorMs.value} ms`);
+  temporizador.value = tiempoConsulta.value * 1000;
+  iniciarTemporizadorConsultas();
+  console.log(`Tiempo de consulta actualizado a ${tiempoConsulta.value} segundos`);
+  crearToast(toastMessage, toastColor, isToastOpen, 'success', `Tiempo de consulta actualizado a ${tiempoConsulta.value} segundos`);
 }
+
+
 
 </script>
 
@@ -287,7 +294,7 @@ function enviarTiempoConsulta() {
 }
 
 li {
-  background-color: rgba(0, 0, 0, 0.89);
+  background-color: rgba(15, 15, 15, 0.87);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -329,11 +336,11 @@ ul {
   margin-left: 20px;
 }
 
+
 h4 {
   margin-bottom: 30px;
   color: #61adff;
   font-weight: bold;
-  font-size:x-large;
 }
 
 input {
@@ -342,18 +349,10 @@ input {
   border: 1px solid #ccc;
 }
 
-
-
 .borrarred:hover {
   background-color: #a00a0a;
 }
 
-#tiempoConsulta {
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  width: 100px;
-}
 
 .administrar {
   position: fixed;
@@ -381,20 +380,21 @@ form {
   border-radius: 30px;
   display: flex;
   flex-direction: row;
-  align-items: end;
   gap: 30px;
   position: fixed;
   bottom: 80px;
   right: 20px;
   padding: 20px;
+  align-items: end;
 }
 
-.administracion div {
-  backdrop-filter: blur(12px);
-  background-color: #0a0a0abe;
+.administracion > div {
+  backdrop-filter: blur(10px);
+  background-color: #000000bb;
   padding: 20px;
   border-radius: 10px;
-  width: 400px
+  width: 400px;
+  box-shadow: 2px 2px 10px #0d0d0d;
 }
 
 .modal-overlay {
@@ -405,6 +405,10 @@ form {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+}
+
+#establecerTiempo div{
+  margin: 0;
 }
 
 .modal-confirmacion {
@@ -479,7 +483,11 @@ form {
   }
 
 
-  .administracion {
+.administracion {
+    top: -20;
+    flex-direction: column;
+    width: 90%;
+    right: 5%;
     margin: 0;
     left: 0;
     right: 0;
@@ -495,19 +503,9 @@ form {
     box-sizing: border-box;
   }
 
-  .administracion div {
+  .administracion > div {
     margin: 0;
     width: 100%;
   }
-
-  .divtiempo form h4{
-    display: flex;
-    margin-bottom: 0;
-  }
-
-  h4{
-    font-size: large;
-  }
-
 }
 </style>

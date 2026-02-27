@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-@CrossOrigin(origins = "http://localhost:5173") //Para que el navegador me deje conectarlo a Vue
+@CrossOrigin(origins = "*") //Para que el navegador me deje conectarlo a Vue
 @RestController
 @RequestMapping("/registros-redes")
 public class EstadoController {
